@@ -3,6 +3,7 @@ package scanner
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"folder-cleaner-go/models"
 
@@ -82,10 +83,30 @@ func (s *Scanner) Run(ctx context.Context) ([]models.DuplicateGroup, error) {
 		return nil, err
 	}
 
+	// Stage 5.5: Perceptual hash for images (enrichment, not filtering)
+	s.onProgress("perceptual-hashing", 0, len(candidates))
+	candidates, err = PerceptualHash(ctx, candidates)
+	if err != nil {
+		return nil, fmt.Errorf("perceptual hash: %w", err)
+	}
+	s.onProgress("perceptual-hashing", len(candidates), len(candidates))
+
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
 	// Stage 6: Group by full hash — build duplicate groups
 	fullGroups := GroupByHash(candidates, func(f models.FileInfo) string {
 		return f.FullHash
 	})
+
+	// Stage 7: Find similar images by perceptual hash
+	if s.threshold > 0 {
+		similarGroups := groupBySimilarHash(candidates, int(s.threshold))
+		result := buildDuplicateGroups(fullGroups)
+		result = append(result, buildSimilarGroups(similarGroups, s.threshold)...)
+		return result, nil
+	}
 
 	return buildDuplicateGroups(fullGroups), nil
 }
@@ -124,5 +145,92 @@ func buildDuplicateGroups(groups map[string][]models.FileInfo) []models.Duplicat
 		})
 	}
 
+	return result
+}
+
+// groupBySimilarHash groups images with similar perceptual hashes.
+// distance is the maximum Hamming distance to consider as similar.
+func groupBySimilarHash(files []models.FileInfo, distance int) [][]models.FileInfo {
+	// Collect only files with perceptual hashes
+	var images []models.FileInfo
+	for _, f := range files {
+		if f.PerceptualHash != "" {
+			images = append(images, f)
+		}
+	}
+
+	if len(images) < 2 {
+		return nil
+	}
+
+	// Parse hashes
+	type hashedImage struct {
+		file models.FileInfo
+		hash uint64
+	}
+	var hashed []hashedImage
+	for _, img := range images {
+		h, err := strconv.ParseUint(img.PerceptualHash, 16, 64)
+		if err != nil {
+			continue
+		}
+		hashed = append(hashed, hashedImage{file: img, hash: h})
+	}
+
+	// Simple O(n^2) comparison — fine for typical image counts
+	used := make(map[int]bool)
+	var groups [][]models.FileInfo
+
+	for i := 0; i < len(hashed); i++ {
+		if used[i] {
+			continue
+		}
+		group := []models.FileInfo{hashed[i].file}
+		for j := i + 1; j < len(hashed); j++ {
+			if used[j] {
+				continue
+			}
+			if hammingDistance(hashed[i].hash, hashed[j].hash) <= distance {
+				group = append(group, hashed[j].file)
+				used[j] = true
+			}
+		}
+		if len(group) >= 2 {
+			used[i] = true
+			groups = append(groups, group)
+		}
+	}
+
+	return groups
+}
+
+func hammingDistance(a, b uint64) int {
+	xor := a ^ b
+	count := 0
+	for xor != 0 {
+		count++
+		xor &= xor - 1
+	}
+	return count
+}
+
+func buildSimilarGroups(groups [][]models.FileInfo, threshold float64) []models.DuplicateGroup {
+	result := make([]models.DuplicateGroup, 0, len(groups))
+	for _, files := range groups {
+		var totalSize int64
+		for _, f := range files {
+			totalSize += f.Size
+		}
+		wastedSize := totalSize - files[0].Size
+
+		result = append(result, models.DuplicateGroup{
+			ID:         uuid.New().String(),
+			Kind:       models.KindSimilar,
+			Similarity: 100 - threshold, // rough approximation
+			Files:      files,
+			TotalSize:  totalSize,
+			WastedSize: wastedSize,
+		})
+	}
 	return result
 }
