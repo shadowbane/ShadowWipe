@@ -297,6 +297,21 @@ the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/
 
 For the full license text, see [LICENSE.md](LICENSE.md).
 
+### Third-Party Licenses
+
+This project includes the following third-party dependencies with their respective licenses:
+
+| Dependency                                                | License                                           |
+|-----------------------------------------------------------|---------------------------------------------------|
+| [wastebasket](https://github.com/Bios-Marcel/wastebasket) | [MPL-2.0](https://www.mozilla.org/en-US/MPL/2.0/) |
+| [Wails](https://github.com/wailsapp/wails)                | MIT                                               |
+| [BLAKE3](https://github.com/zeebo/blake3)                 | CC0-1.0                                           |
+| [fastwalk](https://github.com/charlievieth/fastwalk)      | MIT                                               |
+| [goimagehash](https://github.com/corona10/goimagehash)    | BSD-2-Clause                                      |
+| [uuid](https://github.com/google/uuid)                    | BSD-3-Clause                                      |
+| [x/sync](https://pkg.go.dev/golang.org/x/sync)            | BSD-3-Clause                                      |
+| [x/image](https://pkg.go.dev/golang.org/x/image)          | BSD-3-Clause                                      |
+
 ---
 
 <div align="center">
