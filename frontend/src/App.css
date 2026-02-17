@@ -1,0 +1,378 @@
+#App {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    text-align: left;
+}
+
+#App h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+/* Directory Picker */
+.directory-picker {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.picker-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.picker-empty {
+    padding: 1.5rem;
+    text-align: center;
+    opacity: 0.4;
+    font-size: 0.9rem;
+}
+
+.path-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.path-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    margin-bottom: 0.4rem;
+}
+
+.path-text {
+    font-size: 0.85rem;
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    margin-right: 0.5rem;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    line-height: 1;
+}
+.btn-remove:hover {
+    color: #ff6b6b;
+}
+.btn-remove:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Buttons */
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-primary {
+    display: block;
+    width: 100%;
+    background: #3b82f6;
+    color: white;
+    padding: 0.7rem;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+.btn-primary:hover {
+    background: #2563eb;
+}
+.btn-primary:disabled {
+    background: #3b82f6;
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+.btn-secondary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+    margin-top: 0.75rem;
+}
+.btn-cancel:hover {
+    background: rgba(255, 107, 107, 0.25);
+}
+
+/* Scan Progress */
+.scan-progress {
+    margin-top: 1rem;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.stage-label {
+    opacity: 0.8;
+}
+
+.progress-count {
+    opacity: 0.5;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.progress-bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+/* Scan Results */
+.scan-result {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.scan-result p {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+}
+
+.scan-result-complete {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+}
+
+.scan-result-error {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+}
+
+.scan-result-cancelled {
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 0.7;
+}
+
+/* Duplicate Results */
+.duplicate-list {
+    margin-top: 1.5rem;
+}
+
+.duplicate-summary {
+    text-align: center;
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.duplicate-summary strong {
+    color: #f59e0b;
+}
+
+.group-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.file-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+}
+
+.file-row:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.file-row.selected {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.file-row.will-trash {
+    opacity: 0.45;
+}
+
+.file-row input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    accent-color: #3b82f6;
+}
+
+.file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-path {
+    font-family: monospace;
+    font-size: 0.75rem;
+    opacity: 0.45;
+    word-break: break-all;
+}
+
+.file-size {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-family: monospace;
+    opacity: 0.6;
+}
+
+.duplicate-info {
+    text-align: center;
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.duplicate-actions-top {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.btn-trash {
+    display: block;
+    width: 100%;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.15s;
+}
+
+.btn-trash:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+.btn-trash:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.trash-result {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: rgba(52, 211, 153, 0.1);
+    border-radius: 8px;
+    color: #34d399;
+}
+
+.trash-result p {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+}
+
+.loading-text {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.5;
+}
+
+/* File meta row (date + actions) */
+.file-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.file-date {
+    font-size: 0.75rem;
+    opacity: 0.4;
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.btn-action {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-action:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+}
