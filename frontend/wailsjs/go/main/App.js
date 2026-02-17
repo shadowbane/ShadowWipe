@@ -26,10 +26,6 @@ export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
 }
 
-export function GetThumbnail(arg1) {
-  return window['go']['main']['App']['GetThumbnail'](arg1);
-}
-
 export function GetVersion() {
   return window['go']['main']['App']['GetVersion']();
 }

@@ -3,7 +3,7 @@ import { EventsOn, EventsOff } from '../../wailsjs/runtime/runtime';
 import { StartScan, CancelScan } from '../../wailsjs/go/main/App';
 import { models } from '../../wailsjs/go/models';
 import { ScanProgress, ScanStatus } from '../types';
-import { clearThumbnailCache } from './useThumbnail';
+
 
 export function useScan() {
     const [status, setStatus] = useState<ScanStatus>('idle');
@@ -59,7 +59,6 @@ export function useScan() {
         setProgress({ stage: '', processed: 0, total: 0 });
         setDuplicateCount(0);
         setError('');
-        clearThumbnailCache();
     }, []);
 
     return { status, progress, duplicateCount, error, startScan, cancelScan, reset };

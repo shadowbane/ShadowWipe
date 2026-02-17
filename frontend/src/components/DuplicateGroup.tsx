@@ -1,13 +1,11 @@
 import { formatSize, formatDate } from '../utils/format';
 import { OpenFile, OpenFolder } from '../../wailsjs/go/main/App';
-import { FileThumbnail } from './FileThumbnail';
 
 interface FileInfo {
     path: string;
     size: number;
     name: string;
     modified: number;
-    extension: string;
 }
 
 export interface DuplicateGroupData {
@@ -63,7 +61,6 @@ export function DuplicateGroup({ group, keptPaths, onToggle, onKeepFirst, onKeep
                             checked={isKept}
                             onChange={() => onToggle(group.id, file.path)}
                         />
-                        <FileThumbnail path={file.path} extension={file.extension || ''} name={file.name} />
                         <div className="file-details">
                             <div className="file-name">{file.name}</div>
                             <div className="file-path">{file.path}</div>
