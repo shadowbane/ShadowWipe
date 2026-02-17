@@ -10,6 +10,10 @@ export function DeleteFiles(arg1) {
   return window['go']['main']['App']['DeleteFiles'](arg1);
 }
 
+export function GetBuildInfo() {
+  return window['go']['main']['App']['GetBuildInfo']();
+}
+
 export function GetDuplicateGroups() {
   return window['go']['main']['App']['GetDuplicateGroups']();
 }

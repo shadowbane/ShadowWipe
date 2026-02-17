@@ -37,9 +37,27 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+// BuildInfo holds version and build metadata returned to the frontend.
+type BuildInfo struct {
+	Version   string `json:"version"`
+	BuildTime string `json:"build_time"`
+	BuildOS   string `json:"build_os"`
+	BuildArch string `json:"build_arch"`
+}
+
 // GetVersion returns the app version (injected at build time from git tag).
 func (a *App) GetVersion() string {
 	return Version
+}
+
+// GetBuildInfo returns full build metadata.
+func (a *App) GetBuildInfo() BuildInfo {
+	return BuildInfo{
+		Version:   Version,
+		BuildTime: BuildTime,
+		BuildOS:   BuildOS,
+		BuildArch: BuildArch,
+	}
 }
 
 // SelectDirectory opens a native directory picker and returns the selected path.

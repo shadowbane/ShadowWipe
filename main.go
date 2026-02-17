@@ -11,8 +11,13 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// Version is set at build time via -ldflags "-X main.Version=..."
-var Version = "dev"
+// Build-time variables injected via -ldflags
+var (
+	Version   = "dev"
+	BuildTime = "unknown"
+	BuildOS   = "unknown"
+	BuildArch = "unknown"
+)
 
 func main() {
 	app := NewApp()

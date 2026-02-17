@@ -1,3 +1,26 @@
+export namespace main {
+	
+	export class BuildInfo {
+	    version: string;
+	    build_time: string;
+	    build_os: string;
+	    build_arch: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new BuildInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.version = source["version"];
+	        this.build_time = source["build_time"];
+	        this.build_os = source["build_os"];
+	        this.build_arch = source["build_arch"];
+	    }
+	}
+
+}
+
 export namespace models {
 	
 	export class FailedDelete {

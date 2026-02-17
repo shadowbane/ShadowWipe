@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserOpenURL } from '../../wailsjs/runtime/runtime';
-import { GetVersion } from '../../wailsjs/go/main/App';
+import { GetBuildInfo } from '../../wailsjs/go/main/App';
 
 interface Props {
     open: boolean;
@@ -33,10 +33,10 @@ export function SettingsPanel({
 }: Props) {
     const [activeTab, setActiveTab] = useState<'general' | 'exclusions' | 'about'>('general');
     const [newExclusion, setNewExclusion] = useState('');
-    const [version, setVersion] = useState('');
+    const [buildInfo, setBuildInfo] = useState({ version: '', build_time: '', build_os: '', build_arch: '' });
 
     useEffect(() => {
-        GetVersion().then(setVersion);
+        GetBuildInfo().then(setBuildInfo);
     }, []);
 
     const addExclusion = () => {
@@ -188,8 +188,14 @@ export function SettingsPanel({
                         <div className="about-content">
                             <div className="about-app">
                                 <h3 className="about-app-name">ShadowWipe</h3>
-                                <span className="about-version">{version}</span>
+                                <span className="about-version">{buildInfo.version}</span>
                             </div>
+                            {buildInfo.build_time !== 'unknown' && (
+                                <div className="about-build-meta">
+                                    <span>Built: {buildInfo.build_time}</span>
+                                    <span>OS/Arch: {buildInfo.build_os}/{buildInfo.build_arch}</span>
+                                </div>
+                            )}
                             <p className="about-description">
                                 Cross-platform duplicate file finder &amp; cleaner.
                                 Uses a multi-stage deduplication pipeline with BLAKE3 hashing
