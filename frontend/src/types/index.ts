@@ -10,4 +10,5 @@ export const STAGE_LABELS: Record<string, string> = {
     'walking': 'Discovering files',
     'partial-hashing': 'Quick-checking candidates',
     'full-hashing': 'Verifying duplicates',
+    'perceptual-hashing': 'Analyzing images',
 };

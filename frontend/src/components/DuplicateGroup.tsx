@@ -20,14 +20,32 @@ interface Props {
     group: DuplicateGroupData;
     keptPaths: Set<string>;
     onToggle: (groupId: string, path: string) => void;
+    onKeepFirst: (groupId: string) => void;
+    onKeepAll: (groupId: string) => void;
 }
 
-export function DuplicateGroup({ group, keptPaths, onToggle }: Props) {
+export function DuplicateGroup({ group, keptPaths, onToggle, onKeepFirst, onKeepAll }: Props) {
     return (
         <div className="group-card">
             <div className="group-header">
                 <span>{group.files.length} files</span>
-                <span>{formatSize(group.wasted_size)} wasted</span>
+                <span className="group-header-actions">
+                    <button
+                        className="btn-action"
+                        onClick={() => onKeepFirst(group.id)}
+                        title="Keep first file only"
+                    >
+                        Keep First
+                    </button>
+                    <button
+                        className="btn-action"
+                        onClick={() => onKeepAll(group.id)}
+                        title="Keep all files"
+                    >
+                        Keep All
+                    </button>
+                    <span className="group-wasted">{formatSize(group.wasted_size)} wasted</span>
+                </span>
             </div>
 
             {group.files.map((file) => {

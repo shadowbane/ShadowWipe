@@ -13,7 +13,12 @@ export function DuplicateList({ onReset }: Props) {
     // Map<groupId, Set<keptPaths>> — checked files are kept, unchecked get trashed
     const [selections, setSelections] = useState<Map<string, Set<string>>>(new Map());
     const [deleting, setDeleting] = useState(false);
-    const [deletedCount, setDeletedCount] = useState<number | null>(null);
+    const [trashResult, setTrashResult] = useState<{
+        deletedCount: number;
+        failed: { path: string; reason: string }[];
+    } | null>(null);
+    const [trashError, setTrashError] = useState<string | null>(null);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         GetDuplicateGroups()
@@ -49,6 +54,28 @@ export function DuplicateList({ onReset }: Props) {
         });
     };
 
+    const handleKeepFirst = (groupId: string) => {
+        setSelections((prev) => {
+            const next = new Map(prev);
+            const group = groups.find((g) => g.id === groupId);
+            if (group && group.files.length > 0) {
+                next.set(groupId, new Set([group.files[0].path]));
+            }
+            return next;
+        });
+    };
+
+    const handleKeepAll = (groupId: string) => {
+        setSelections((prev) => {
+            const next = new Map(prev);
+            const group = groups.find((g) => g.id === groupId);
+            if (group) {
+                next.set(groupId, new Set(group.files.map((f) => f.path)));
+            }
+            return next;
+        });
+    };
+
     // Count total files that will be trashed (unchecked files)
     let trashCount = 0;
     groups.forEach((group) => {
@@ -58,28 +85,40 @@ export function DuplicateList({ onReset }: Props) {
         }
     });
 
-    const handleTrash = async () => {
-        const pathsToDelete: string[] = [];
-
+    const collectPathsToDelete = (): string[] => {
+        const paths: string[] = [];
         groups.forEach((group) => {
             const kept = selections.get(group.id);
             if (kept) {
                 group.files.forEach((file) => {
                     if (!kept.has(file.path)) {
-                        pathsToDelete.push(file.path);
+                        paths.push(file.path);
                     }
                 });
             }
         });
+        return paths;
+    };
 
+    const handleTrashClick = () => {
+        if (trashCount === 0) return;
+        setShowConfirm(true);
+    };
+
+    const handleConfirmTrash = async () => {
+        setShowConfirm(false);
+        const pathsToDelete = collectPathsToDelete();
         if (pathsToDelete.length === 0) return;
 
+        setTrashError(null);
         setDeleting(true);
         try {
-            await DeleteFiles(pathsToDelete);
-            setDeletedCount(pathsToDelete.length);
-        } catch {
-            // Deletion failed — stay on current view
+            const result = await DeleteFiles(pathsToDelete);
+            const deletedCount = result.deleted_paths?.length ?? 0;
+            const failed = result.failed_paths ?? [];
+            setTrashResult({ deletedCount, failed });
+        } catch (e: any) {
+            setTrashError(e?.message || String(e));
         } finally {
             setDeleting(false);
         }
@@ -89,13 +128,43 @@ export function DuplicateList({ onReset }: Props) {
         return <div className="loading-text">Loading duplicate groups...</div>;
     }
 
-    if (deletedCount !== null) {
+    if (!loading && groups.length === 0 && trashResult === null) {
         return (
             <div className="trash-result">
-                <p>Moved {deletedCount} file{deletedCount !== 1 ? 's' : ''} to trash.</p>
+                <p>All duplicates have been resolved!</p>
                 <button className="btn btn-secondary" onClick={onReset}>
                     Scan Again
                 </button>
+            </div>
+        );
+    }
+
+    if (trashResult !== null) {
+        return (
+            <div className="trash-result-container">
+                {trashResult.deletedCount > 0 && (
+                    <div className="trash-result">
+                        <p>Moved {trashResult.deletedCount} file{trashResult.deletedCount !== 1 ? 's' : ''} to trash.</p>
+                    </div>
+                )}
+                {trashResult.failed.length > 0 && (
+                    <div className="trash-failures">
+                        <p>Failed to move {trashResult.failed.length} file{trashResult.failed.length !== 1 ? 's' : ''}:</p>
+                        <ul>
+                            {trashResult.failed.map((f) => (
+                                <li key={f.path}>
+                                    <span className="fail-path">{f.path}</span>
+                                    <span className="fail-reason">{f.reason}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                    <button className="btn btn-secondary" onClick={onReset}>
+                        Scan Again
+                    </button>
+                </div>
             </div>
         );
     }
@@ -126,13 +195,21 @@ export function DuplicateList({ onReset }: Props) {
                     group={group}
                     keptPaths={selections.get(group.id) || new Set()}
                     onToggle={handleToggle}
+                    onKeepFirst={handleKeepFirst}
+                    onKeepAll={handleKeepAll}
                 />
             ))}
+
+            {trashError && (
+                <div className="trash-error">
+                    Failed to move files to trash: {trashError}
+                </div>
+            )}
 
             <button
                 className="btn btn-trash"
                 disabled={trashCount === 0 || deleting}
-                onClick={handleTrash}
+                onClick={handleTrashClick}
             >
                 {deleting
                     ? 'Moving to Trash...'
@@ -140,6 +217,23 @@ export function DuplicateList({ onReset }: Props) {
                       ? `Move ${trashCount} file${trashCount !== 1 ? 's' : ''} to Trash`
                       : 'Move to Trash'}
             </button>
+
+            {showConfirm && (
+                <div className="confirm-overlay" onClick={() => setShowConfirm(false)}>
+                    <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
+                        <p>Move <strong>{trashCount}</strong> file{trashCount !== 1 ? 's' : ''} to trash?</p>
+                        <p className="confirm-detail">This action can be undone from your system trash.</p>
+                        <div className="confirm-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowConfirm(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-confirm-trash" onClick={handleConfirmTrash}>
+                                Move to Trash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

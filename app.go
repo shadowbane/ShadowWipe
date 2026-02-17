@@ -119,9 +119,9 @@ func (a *App) DeleteFiles(paths []string) (*models.DeleteOperation, error) {
 	a.mu.Lock()
 	a.history = append(a.history, *op)
 
-	// Remove trashed files from groups
-	trashedSet := make(map[string]bool, len(paths))
-	for _, p := range paths {
+	// Remove only successfully trashed files from groups
+	trashedSet := make(map[string]bool, len(op.DeletedPaths))
+	for _, p := range op.DeletedPaths {
 		trashedSet[p] = true
 	}
 	filtered := a.groups[:0]

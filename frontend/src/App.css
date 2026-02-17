@@ -323,18 +323,63 @@
     cursor: not-allowed;
 }
 
+.trash-result-container {
+    margin-top: 1.5rem;
+}
+
 .trash-result {
     text-align: center;
     padding: 1rem;
-    margin-top: 1rem;
     background: rgba(52, 211, 153, 0.1);
     border-radius: 8px;
     color: #34d399;
 }
 
 .trash-result p {
-    margin: 0 0 0.75rem;
+    margin: 0;
     font-size: 0.95rem;
+}
+
+.trash-failures {
+    padding: 1rem;
+    margin-top: 0.75rem;
+    background: rgba(239, 68, 68, 0.08);
+    border-radius: 8px;
+    color: #ef4444;
+    font-size: 0.85rem;
+}
+
+.trash-failures p {
+    margin: 0 0 0.5rem;
+}
+
+.trash-failures ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.trash-failures li {
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.trash-failures li:last-child {
+    border-bottom: none;
+}
+
+.fail-path {
+    font-family: monospace;
+    font-size: 0.75rem;
+    word-break: break-all;
+}
+
+.fail-reason {
+    opacity: 0.6;
+    font-size: 0.75rem;
 }
 
 .loading-text {
@@ -375,4 +420,81 @@
 .btn-action:hover {
     background: rgba(255, 255, 255, 0.15);
     color: rgba(255, 255, 255, 0.9);
+}
+
+/* Trash error */
+.trash-error {
+    text-align: center;
+    padding: 0.75rem 1rem;
+    margin-top: 0.75rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 6px;
+    color: #ef4444;
+    font-size: 0.85rem;
+}
+
+/* Group header actions */
+.group-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.group-wasted {
+    opacity: 0.7;
+    font-size: 0.85rem;
+}
+
+/* Confirmation Dialog */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.confirm-dialog {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.confirm-dialog p {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.confirm-detail {
+    opacity: 0.5;
+    font-size: 0.85rem !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.btn-confirm-trash {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-confirm-trash:hover {
+    background: #dc2626;
 }
