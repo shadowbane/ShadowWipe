@@ -187,6 +187,102 @@
     gap: 0.85rem;
 }
 
+/* About Tab */
+.about-content {
+    text-align: center;
+}
+
+.about-app {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.about-app-name {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.about-version {
+    font-size: 0.8rem;
+    opacity: 0.4;
+    font-family: monospace;
+}
+
+.about-description {
+    font-size: 0.82rem;
+    opacity: 0.6;
+    line-height: 1.5;
+    margin: 0 0 0.75rem;
+}
+
+.about-tech {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.about-tech-tag {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93bbfc;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2rem 0.55rem;
+    border-radius: 10px;
+}
+
+.about-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 0.75rem 0;
+}
+
+.about-author {
+    margin-bottom: 0.75rem;
+}
+
+.about-author-name {
+    margin: 0 0 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.about-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.about-link {
+    background: none;
+    border: none;
+    color: #93bbfc;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+}
+.about-link:hover {
+    text-decoration: underline;
+}
+
+.about-link-sep {
+    opacity: 0.25;
+    font-size: 0.75rem;
+}
+
+.about-license {
+    font-size: 0.75rem;
+    opacity: 0.4;
+    margin: 0;
+}
+
 .settings-row {
     display: flex;
     align-items: center;

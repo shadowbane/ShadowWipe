@@ -37,6 +37,11 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+// GetVersion returns the app version (injected at build time from git tag).
+func (a *App) GetVersion() string {
+	return Version
+}
+
 // SelectDirectory opens a native directory picker and returns the selected path.
 func (a *App) SelectDirectory() (string, error) {
 	return runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{

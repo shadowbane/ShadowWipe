@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BrowserOpenURL } from '../../wailsjs/runtime/runtime';
+import { GetVersion } from '../../wailsjs/go/main/App';
 
 interface Props {
     open: boolean;
@@ -29,8 +31,13 @@ export function SettingsPanel({
     onSkipHiddenChange,
     onExcludedDirsChange,
 }: Props) {
-    const [activeTab, setActiveTab] = useState<'general' | 'exclusions'>('general');
+    const [activeTab, setActiveTab] = useState<'general' | 'exclusions' | 'about'>('general');
     const [newExclusion, setNewExclusion] = useState('');
+    const [version, setVersion] = useState('');
+
+    useEffect(() => {
+        GetVersion().then(setVersion);
+    }, []);
 
     const addExclusion = () => {
         const trimmed = newExclusion.trim();
@@ -73,6 +80,12 @@ export function SettingsPanel({
                         onClick={() => setActiveTab('exclusions')}
                     >
                         Exclusions
+                    </button>
+                    <button
+                        className={`settings-tab ${activeTab === 'about' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('about')}
+                    >
+                        About
                     </button>
                 </div>
 
@@ -168,6 +181,50 @@ export function SettingsPanel({
                                     </ul>
                                 )}
                             </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'about' && (
+                        <div className="about-content">
+                            <div className="about-app">
+                                <h3 className="about-app-name">ShadowWipe</h3>
+                                <span className="about-version">{version}</span>
+                            </div>
+                            <p className="about-description">
+                                Cross-platform duplicate file finder &amp; cleaner.
+                                Uses a multi-stage deduplication pipeline with BLAKE3 hashing
+                                and perceptual image matching.
+                            </p>
+
+                            <div className="about-tech">
+                                <span className="about-tech-tag">Go</span>
+                                <span className="about-tech-tag">Wails v2</span>
+                                <span className="about-tech-tag">React</span>
+                                <span className="about-tech-tag">BLAKE3</span>
+                                <span className="about-tech-tag">pHash</span>
+                            </div>
+
+                            <div className="about-divider" />
+
+                            <div className="about-author">
+                                <p className="about-author-name">Adly Shadowbane</p>
+                                <div className="about-links">
+                                    <button className="about-link" onClick={() => BrowserOpenURL('https://github.com/shadowbane')}>
+                                        GitHub
+                                    </button>
+                                    <span className="about-link-sep">/</span>
+                                    <button className="about-link" onClick={() => BrowserOpenURL('mailto:me@shadowbane.biz.id')}>
+                                        me@shadowbane.biz.id
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p className="about-license">
+                                Licensed under{' '}
+                                <button className="about-link" onClick={() => BrowserOpenURL('https://polyformproject.org/licenses/noncommercial/1.0.0/')}>
+                                    PolyForm Noncommercial 1.0.0
+                                </button>
+                            </p>
                         </div>
                     )}
                 </div>

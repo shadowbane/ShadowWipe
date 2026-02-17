@@ -14,6 +14,8 @@ export function GetSettings():Promise<models.ScanSettings>;
 
 export function GetThumbnail(arg1:string):Promise<string>;
 
+export function GetVersion():Promise<string>;
+
 export function OpenFile(arg1:string):Promise<void>;
 
 export function OpenFolder(arg1:string):Promise<void>;
