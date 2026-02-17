@@ -296,7 +296,80 @@
 
 .duplicate-actions-top {
     text-align: center;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Sorting & Filtering Toolbar */
+.duplicate-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.toolbar-label {
+    font-size: 0.75rem;
+    opacity: 0.45;
+    margin-right: 0.25rem;
+}
+
+.toolbar-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    padding: 0.25rem 1.6rem 0.25rem 0.5rem;
+    cursor: pointer;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+}
+
+.toolbar-select:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.toolbar-select:focus {
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.toolbar-select option {
+    background: #1e293b;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.filter-chip {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.filter-chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.filter-chip.active {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #93bbfc;
 }
 
 .btn-trash {

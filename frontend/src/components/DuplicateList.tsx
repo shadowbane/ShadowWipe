@@ -1,7 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DuplicateGroup, DuplicateGroupData } from './DuplicateGroup';
 import { formatSize } from '../utils/format';
 import { GetDuplicateGroups, DeleteFiles } from '../../wailsjs/go/main/App';
+
+type SortBy = 'wasted-desc' | 'wasted-asc' | 'files-desc' | 'name-asc' | 'name-desc';
+type FilterType = 'all' | 'images' | 'documents' | 'audio' | 'video' | 'archives' | 'code' | 'other';
+
+const FILE_TYPE_MAP: Record<string, FilterType> = {
+    '.jpg': 'images', '.jpeg': 'images', '.png': 'images', '.gif': 'images',
+    '.bmp': 'images', '.svg': 'images', '.webp': 'images', '.tiff': 'images', '.ico': 'images',
+    '.pdf': 'documents', '.doc': 'documents', '.docx': 'documents', '.xls': 'documents',
+    '.xlsx': 'documents', '.ppt': 'documents', '.pptx': 'documents', '.txt': 'documents',
+    '.rtf': 'documents', '.odt': 'documents', '.csv': 'documents',
+    '.mp3': 'audio', '.wav': 'audio', '.flac': 'audio', '.aac': 'audio',
+    '.ogg': 'audio', '.wma': 'audio', '.m4a': 'audio',
+    '.mp4': 'video', '.avi': 'video', '.mkv': 'video', '.mov': 'video',
+    '.wmv': 'video', '.flv': 'video', '.webm': 'video',
+    '.zip': 'archives', '.rar': 'archives', '.7z': 'archives', '.tar': 'archives',
+    '.gz': 'archives', '.bz2': 'archives', '.xz': 'archives',
+    '.js': 'code', '.ts': 'code', '.tsx': 'code', '.jsx': 'code', '.py': 'code',
+    '.go': 'code', '.rs': 'code', '.java': 'code', '.c': 'code', '.cpp': 'code',
+    '.h': 'code', '.css': 'code', '.html': 'code', '.json': 'code', '.xml': 'code',
+    '.yaml': 'code', '.yml': 'code', '.md': 'code', '.sh': 'code',
+};
+
+function getGroupType(group: DuplicateGroupData): FilterType {
+    const ext = group.files[0]?.name?.match(/\.[^.]+$/)?.[0]?.toLowerCase() || '';
+    return FILE_TYPE_MAP[ext] || 'other';
+}
+
+const FILTER_LABELS: Record<FilterType, string> = {
+    all: 'All',
+    images: 'Images',
+    documents: 'Documents',
+    audio: 'Audio',
+    video: 'Video',
+    archives: 'Archives',
+    code: 'Code',
+    other: 'Other',
+};
 
 interface Props {
     onReset: () => void;
@@ -19,6 +56,8 @@ export function DuplicateList({ onReset }: Props) {
     } | null>(null);
     const [trashError, setTrashError] = useState<string | null>(null);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [sortBy, setSortBy] = useState<SortBy>('wasted-desc');
+    const [filterType, setFilterType] = useState<FilterType>('all');
 
     useEffect(() => {
         GetDuplicateGroups()
@@ -84,6 +123,40 @@ export function DuplicateList({ onReset }: Props) {
             trashCount += group.files.length - kept.size;
         }
     });
+
+    // Determine which filter types have groups
+    const availableTypes = useMemo(() => {
+        const types = new Set<FilterType>();
+        groups.forEach((g) => types.add(getGroupType(g)));
+        return types;
+    }, [groups]);
+
+    // Filter and sort groups
+    const displayGroups = useMemo(() => {
+        let filtered = groups;
+        if (filterType !== 'all') {
+            filtered = groups.filter((g) => getGroupType(g) === filterType);
+        }
+        const sorted = [...filtered];
+        switch (sortBy) {
+            case 'wasted-desc':
+                sorted.sort((a, b) => b.wasted_size - a.wasted_size);
+                break;
+            case 'wasted-asc':
+                sorted.sort((a, b) => a.wasted_size - b.wasted_size);
+                break;
+            case 'files-desc':
+                sorted.sort((a, b) => b.files.length - a.files.length);
+                break;
+            case 'name-asc':
+                sorted.sort((a, b) => (a.files[0]?.name || '').localeCompare(b.files[0]?.name || ''));
+                break;
+            case 'name-desc':
+                sorted.sort((a, b) => (b.files[0]?.name || '').localeCompare(a.files[0]?.name || ''));
+                break;
+        }
+        return sorted;
+    }, [groups, filterType, sortBy]);
 
     const collectPathsToDelete = (): string[] => {
         const paths: string[] = [];
@@ -189,7 +262,38 @@ export function DuplicateList({ onReset }: Props) {
                 </button>
             </div>
 
-            {groups.map((group) => (
+            <div className="duplicate-toolbar">
+                <div className="toolbar-group">
+                    <span className="toolbar-label">Sort:</span>
+                    <select className="toolbar-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as SortBy)}>
+                        <option value="wasted-desc">Biggest first</option>
+                        <option value="wasted-asc">Smallest first</option>
+                        <option value="files-desc">Most files first</option>
+                        <option value="name-asc">Name A-Z</option>
+                        <option value="name-desc">Name Z-A</option>
+                    </select>
+                </div>
+                <div className="toolbar-group">
+                    <span className="toolbar-label">Filter:</span>
+                    {(['all', ...Object.keys(FILTER_LABELS).filter((t) => t !== 'all')] as FilterType[])
+                        .filter((t) => t === 'all' || availableTypes.has(t))
+                        .map((t) => (
+                            <button
+                                key={t}
+                                className={`filter-chip${filterType === t ? ' active' : ''}`}
+                                onClick={() => setFilterType(t)}
+                            >
+                                {FILTER_LABELS[t]}
+                            </button>
+                        ))}
+                </div>
+            </div>
+
+            {displayGroups.length === 0 && (
+                <div className="loading-text">No groups match this filter.</div>
+            )}
+
+            {displayGroups.map((group) => (
                 <DuplicateGroup
                     key={group.id}
                     group={group}
