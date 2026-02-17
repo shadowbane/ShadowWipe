@@ -10,6 +10,8 @@ export function GetDuplicateGroups():Promise<Array<models.DuplicateGroup>>;
 
 export function GetOperationHistory():Promise<Array<models.DeleteOperation>>;
 
+export function GetThumbnail(arg1:string):Promise<string>;
+
 export function OpenFile(arg1:string):Promise<void>;
 
 export function OpenFolder(arg1:string):Promise<void>;

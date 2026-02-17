@@ -18,6 +18,10 @@ export function GetOperationHistory() {
   return window['go']['main']['App']['GetOperationHistory']();
 }
 
+export function GetThumbnail(arg1) {
+  return window['go']['main']['App']['GetThumbnail'](arg1);
+}
+
 export function OpenFile(arg1) {
   return window['go']['main']['App']['OpenFile'](arg1);
 }

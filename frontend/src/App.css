@@ -259,6 +259,28 @@
     accent-color: #3b82f6;
 }
 
+.file-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.file-thumbnail-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.06);
+    animation: thumb-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes thumb-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}
+
 .file-details {
     flex: 1;
     min-width: 0;

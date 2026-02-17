@@ -8,6 +8,7 @@ import (
 	"folder-cleaner-go/models"
 	"folder-cleaner-go/operations"
 	"folder-cleaner-go/scanner"
+	"folder-cleaner-go/thumbnail"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -20,11 +21,14 @@ type App struct {
 	cancelScan context.CancelFunc
 	groups     []models.DuplicateGroup
 	history    []models.DeleteOperation
+	thumbCache *thumbnail.Cache
 }
 
 // NewApp creates a new App application struct.
 func NewApp() *App {
-	return &App{}
+	return &App{
+		thumbCache: thumbnail.NewCache(2000),
+	}
 }
 
 // startup is called when the app starts. The context is saved
@@ -49,6 +53,7 @@ func (a *App) StartScan(paths []string, threshold float64) error {
 	}
 	a.scanning = true
 	a.groups = nil
+	a.thumbCache.Clear()
 	ctx, cancel := context.WithCancel(a.ctx)
 	a.cancelScan = cancel
 	a.mu.Unlock()
@@ -155,6 +160,16 @@ func (a *App) GetOperationHistory() []models.DeleteOperation {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	return a.history
+}
+
+// GetThumbnail returns a base64 data URI for an image thumbnail.
+func (a *App) GetThumbnail(path string) string {
+	if uri, ok := a.thumbCache.Get(path); ok {
+		return uri
+	}
+	uri := thumbnail.Generate(path)
+	a.thumbCache.Put(path, uri)
+	return uri
 }
 
 // OpenFile opens a file with the system's default application.
