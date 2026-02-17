@@ -15,16 +15,14 @@ type ProgressCallback func(stage string, processed, total int)
 
 // Scanner orchestrates the multi-stage deduplication pipeline.
 type Scanner struct {
-	paths      []string
-	threshold  float64
+	settings   models.ScanSettings
 	onProgress ProgressCallback
 }
 
-// New creates a new Scanner for the given directories.
-func New(paths []string, threshold float64, onProgress ProgressCallback) *Scanner {
+// New creates a new Scanner with the given settings.
+func New(settings models.ScanSettings, onProgress ProgressCallback) *Scanner {
 	return &Scanner{
-		paths:      paths,
-		threshold:  threshold,
+		settings:   settings,
 		onProgress: onProgress,
 	}
 }
@@ -33,7 +31,7 @@ func New(paths []string, threshold float64, onProgress ProgressCallback) *Scanne
 func (s *Scanner) Run(ctx context.Context) ([]models.DuplicateGroup, error) {
 	// Stage 1: Walk directories
 	s.onProgress("walking", 0, 0)
-	files, err := Walk(ctx, s.paths)
+	files, err := Walk(ctx, s.settings.Paths, s.settings.MinFileSizeBytes(), s.settings.ExcludedDirs, s.settings.SkipHidden)
 	if err != nil {
 		return nil, fmt.Errorf("walk: %w", err)
 	}
@@ -101,10 +99,10 @@ func (s *Scanner) Run(ctx context.Context) ([]models.DuplicateGroup, error) {
 	})
 
 	// Stage 7: Find similar images by perceptual hash
-	if s.threshold > 0 {
-		similarGroups := groupBySimilarHash(candidates, int(s.threshold))
+	if s.settings.SimilarityThreshold > 0 {
+		similarGroups := groupBySimilarHash(candidates, int(s.settings.SimilarityThreshold))
 		result := buildDuplicateGroups(fullGroups)
-		result = append(result, buildSimilarGroups(similarGroups, s.threshold)...)
+		result = append(result, buildSimilarGroups(similarGroups, s.settings.SimilarityThreshold)...)
 		return result, nil
 	}
 

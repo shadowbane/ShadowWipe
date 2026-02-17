@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { EventsOn, EventsOff } from '../../wailsjs/runtime/runtime';
 import { StartScan, CancelScan } from '../../wailsjs/go/main/App';
+import { models } from '../../wailsjs/go/models';
 import { ScanProgress, ScanStatus } from '../types';
 import { clearThumbnailCache } from './useThumbnail';
 
@@ -36,13 +37,13 @@ export function useScan() {
         };
     }, []);
 
-    const startScan = useCallback(async (paths: string[], threshold: number) => {
+    const startScan = useCallback(async (settings: models.ScanSettings) => {
         setStatus('scanning');
         setProgress({ stage: '', processed: 0, total: 0 });
         setDuplicateCount(0);
         setError('');
         try {
-            await StartScan(paths, threshold);
+            await StartScan(settings);
         } catch (e: any) {
             setError(e?.message || String(e));
             setStatus('error');

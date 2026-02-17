@@ -44,8 +44,18 @@ func (a *App) SelectDirectory() (string, error) {
 	})
 }
 
+// GetSettings returns the persisted scan settings (or defaults).
+func (a *App) GetSettings() models.ScanSettings {
+	return models.LoadSettings()
+}
+
+// SaveSettings persists the given scan settings to disk.
+func (a *App) SaveSettings(settings models.ScanSettings) error {
+	return models.SaveSettings(settings)
+}
+
 // StartScan begins scanning the given directories for duplicates.
-func (a *App) StartScan(paths []string, threshold float64) error {
+func (a *App) StartScan(settings models.ScanSettings) error {
 	a.mu.Lock()
 	if a.scanning {
 		a.mu.Unlock()
@@ -66,7 +76,7 @@ func (a *App) StartScan(paths []string, threshold float64) error {
 			a.mu.Unlock()
 		}()
 
-		s := scanner.New(paths, threshold, func(stage string, processed, total int) {
+		s := scanner.New(settings, func(stage string, processed, total int) {
 			runtime.EventsEmit(a.ctx, "scan:progress", map[string]interface{}{
 				"stage":     stage,
 				"processed": processed,

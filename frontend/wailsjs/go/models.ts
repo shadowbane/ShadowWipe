@@ -117,6 +117,29 @@ export namespace models {
 		}
 	}
 	
+	
+	export class ScanSettings {
+	    paths: string[];
+	    min_file_size: number;
+	    min_file_size_unit: string;
+	    excluded_dirs: string[];
+	    similarity_threshold: number;
+	    skip_hidden: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ScanSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.paths = source["paths"];
+	        this.min_file_size = source["min_file_size"];
+	        this.min_file_size_unit = source["min_file_size_unit"];
+	        this.excluded_dirs = source["excluded_dirs"];
+	        this.similarity_threshold = source["similarity_threshold"];
+	        this.skip_hidden = source["skip_hidden"];
+	    }
+	}
 
 }
 

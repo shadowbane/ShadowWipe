@@ -18,6 +18,10 @@ export function GetOperationHistory() {
   return window['go']['main']['App']['GetOperationHistory']();
 }
 
+export function GetSettings() {
+  return window['go']['main']['App']['GetSettings']();
+}
+
 export function GetThumbnail(arg1) {
   return window['go']['main']['App']['GetThumbnail'](arg1);
 }
@@ -30,10 +34,14 @@ export function OpenFolder(arg1) {
   return window['go']['main']['App']['OpenFolder'](arg1);
 }
 
+export function SaveSettings(arg1) {
+  return window['go']['main']['App']['SaveSettings'](arg1);
+}
+
 export function SelectDirectory() {
   return window['go']['main']['App']['SelectDirectory']();
 }
 
-export function StartScan(arg1, arg2) {
-  return window['go']['main']['App']['StartScan'](arg1, arg2);
+export function StartScan(arg1) {
+  return window['go']['main']['App']['StartScan'](arg1);
 }

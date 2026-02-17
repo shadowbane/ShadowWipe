@@ -10,12 +10,16 @@ export function GetDuplicateGroups():Promise<Array<models.DuplicateGroup>>;
 
 export function GetOperationHistory():Promise<Array<models.DeleteOperation>>;
 
+export function GetSettings():Promise<models.ScanSettings>;
+
 export function GetThumbnail(arg1:string):Promise<string>;
 
 export function OpenFile(arg1:string):Promise<void>;
 
 export function OpenFolder(arg1:string):Promise<void>;
 
+export function SaveSettings(arg1:models.ScanSettings):Promise<void>;
+
 export function SelectDirectory():Promise<string>;
 
-export function StartScan(arg1:Array<string>,arg2:number):Promise<void>;
+export function StartScan(arg1:models.ScanSettings):Promise<void>;

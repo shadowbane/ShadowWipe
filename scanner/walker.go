@@ -14,12 +14,25 @@ import (
 )
 
 // Walk traverses the given directories using fastwalk and returns file metadata.
-// It skips hidden files/dirs (prefix "."), symlinks, and zero-byte files.
-func Walk(ctx context.Context, paths []string) ([]models.FileInfo, error) {
+// It filters by minSize (bytes), skips directories in excludedDirs (matched by
+// base name), and optionally skips hidden files/dirs. Symlinks and zero-byte
+// files are always skipped.
+func Walk(ctx context.Context, paths []string, minSize int64, excludedDirs []string, skipHidden bool) ([]models.FileInfo, error) {
 	var (
 		mu    sync.Mutex
 		files []models.FileInfo
 	)
+
+	// Build lookup set for excluded directory base names
+	excludedSet := make(map[string]bool, len(excludedDirs))
+	for _, d := range excludedDirs {
+		excludedSet[d] = true
+	}
+
+	// Always skip zero-byte files
+	if minSize < 1 {
+		minSize = 1
+	}
 
 	conf := fastwalk.Config{
 		NumWorkers: runtime.NumCPU(),
@@ -43,16 +56,20 @@ func Walk(ctx context.Context, paths []string) ([]models.FileInfo, error) {
 
 			name := d.Name()
 
-			// Skip hidden files and directories
-			if strings.HasPrefix(name, ".") {
-				if d.IsDir() {
+			if d.IsDir() {
+				// Skip excluded directories by base name
+				if excludedSet[name] {
+					return fastwalk.SkipDir
+				}
+				// Skip hidden directories
+				if skipHidden && strings.HasPrefix(name, ".") {
 					return fastwalk.SkipDir
 				}
 				return nil
 			}
 
-			// Skip directories (we only collect files)
-			if d.IsDir() {
+			// Skip hidden files
+			if skipHidden && strings.HasPrefix(name, ".") {
 				return nil
 			}
 
@@ -66,8 +83,8 @@ func Walk(ctx context.Context, paths []string) ([]models.FileInfo, error) {
 				return nil // skip if we can't stat
 			}
 
-			// Skip zero-byte files
-			if info.Size() == 0 {
+			// Skip files below minimum size
+			if info.Size() < minSize {
 				return nil
 			}
 
